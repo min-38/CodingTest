@@ -40,17 +40,11 @@ vector<int> solution(string s) {
     }
 
     int cnt = 1;
-    while(cnt <= v.size()) {
+    while(cnt <= v.size())
         for(int i = 0; i < v.size(); i++)
             if(v[i].size() == cnt)
                 for(int j = 0; j < cnt; j++)
                     Insert(answer, v[i][j]);
         cnt++;
-    }
     return answer;
-}
-
-int main() {
-    solution("{{4,2,3},{3},{2,3,4,1},{2,3}}");
-    return 0;
 }
