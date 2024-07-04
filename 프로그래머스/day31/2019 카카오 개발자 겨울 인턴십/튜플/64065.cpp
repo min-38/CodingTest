@@ -40,11 +40,12 @@ vector<int> solution(string s) {
     }
 
     int cnt = 1;
-    while(cnt <= v.size())
+    while(cnt <= v.size()) {
         for(int i = 0; i < v.size(); i++)
             if(v[i].size() == cnt)
                 for(int j = 0; j < cnt; j++)
                     Insert(answer, v[i][j]);
         cnt++;
+    }
     return answer;
 }
