@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -10,27 +11,20 @@ vector<int> solution(vector<int> answers) {
     vector<int> b_ans = {2, 1, 2, 3, 2, 4, 2, 5};
     vector<int> c_ans = {3, 3, 1, 1, 2, 2, 4, 4, 5, 5};
     
-    int correct[3] = {0, 0, 0};
-    int idx = 0;
-    for(int num : answers) {
-        if(a_ans[idx >= a_ans.size() ? idx % a_ans.size() : idx] == num)
+    vector<int> correct(3);
+    for(int i = 0; i < answers.size(); i++) {
+        if(answers[i] == a_ans[i % a_ans.size()])
             correct[0]++;
-        if(b_ans[idx >= b_ans.size() ? idx % b_ans.size() : idx] == num)
+        if(answers[i] == b_ans[i % b_ans.size()])
             correct[1]++;
-        if(c_ans[idx >= c_ans.size() ? idx % c_ans.size() : idx] == num)
+        if(answers[i] == c_ans[i % c_ans.size()])
             correct[2]++;
-        ++idx;
     }
     
-    int max = 0;
+    int max = *max_element(correct.begin(), correct.end());
     for(int i = 0; i < 3; i++)
-        if(max < correct[i]) {
-            answer.clear();
-            answer.push_back(i + 1);
-            max = correct[i];
-        } else if(max == correct[i]) {
-            answer.push_back(i + 1);
-        }
+        if(correct[i] == max)
+            answer.push_back(correct[i]);
 
     return answer;
 }
