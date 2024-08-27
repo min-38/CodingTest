@@ -4,22 +4,12 @@ using namespace std;
 
 int solution(string s)
 {
-    int answer = 0;
-    
     stack<char> st;
-    for(char c : s) {
-        if(st.size() > 0) {
-            if(st.top() == c) {
-                st.pop();
-                continue;
-            }
-        }
-        st.push(c);
-    }
-
-    if(st.size() == 0) {
-        answer = 1;
-    }
+    for(char c : s)
+        if(st.empty() || st.top() != c)
+            st.push(c);
+        else
+            st.pop();
     
-    return answer;
+    return st.empty();
 }
