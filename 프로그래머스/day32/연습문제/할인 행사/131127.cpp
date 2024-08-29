@@ -1,55 +1,27 @@
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
-struct WantStruct {
-    string item;
-    int number;
-    int current_number = 0;
-    bool satisfied = false;
-};
-
 int solution(vector<string> want, vector<int> number, vector<string> discount) {
     int answer = 0;
+    unordered_map<string, int> wantMap; // want를 키, number를 값으로 wantMap 선언
+
+    for(int i = 0; i < want.size(); i++)
+        wantMap[want[i]] = number[i];
     
-    vector<WantStruct> v;
-    for(int i = 0; i < want.size(); i++) {
-        WantStruct ws;
-        ws.item = want[i];
-        ws.number = number[i];
-        v.push_back(ws);
+    for(int i = 0; i < discount.size() - 9; i++) {
+        // i일 회원가입 시 할인받을 수 있는 품목을 키, 개수를 값으로 discound_10d 선언
+        unordered_map<string, int> discount_10d;
+
+        // 각 할인 품목을 키로 개수 저장
+        for(int j = i; j < 10 + i; j++)
+            discount_10d[discount[j]]++;
+
+        // 할인 상품의 품목 및 개수가 원하는 상품의 품목 및 개수와 일치하면 카운트 증가
+        if(wantMap == discount_10d) answer++;
     }
-    
-    int cnt = 0;
-    while(discount.size() - cnt >= want.size()) {
-        for(int i = cnt; i < cnt + 10; i++) {
-            if(i >= discount.size())
-                break;
-        
-            string dcItem = discount[i];
-            for(int j = 0; j < v.size(); j++)
-                if(v[j].item == dcItem) {
-                    v[j].current_number++;
-                    if(v[j].current_number >= v[j].number)
-                        v[j].satisfied = true;
-                    break;
-                }
-        }
-        
-        int satisfied = 0;
-        for(int i = 0; i < v.size(); i++) {
-            if(v[i].satisfied)
-                satisfied++;
-            v[i].satisfied = false;
-            v[i].current_number = 0;
-        }
-        
-        if(satisfied == want.size())
-            answer++;
-        cnt++;
-    }
-    
-    
+
     return answer;
 }
