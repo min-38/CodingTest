@@ -11,17 +11,19 @@ int solution(vector<string> want, vector<int> number, vector<string> discount) {
     for(int i = 0; i < want.size(); i++)
         wantMap[want[i]] = number[i];
     
-    for(int i = 0; i < discount.size() - 9; i++) {
-        // i일 회원가입 시 할인받을 수 있는 품목을 키, 개수를 값으로 discound_10d 선언
-        unordered_map<string, int> discount_10d;
+    unordered_map<string, int> discount_set;
+    // 9일치 정보를 미리 할당
+    for(int i = 0; i < 9; i++)
+        discount_set[discount[i]]++;
 
-        // 각 할인 품목을 키로 개수 저장
-        for(int j = i; j < 10 + i; j++)
-            discount_10d[discount[j]]++;
-
-        // 할인 상품의 품목 및 개수가 원하는 상품의 품목 및 개수와 일치하면 카운트 증가
-        if(wantMap == discount_10d) answer++;
+    // discount_set에 최근의 정보를 추가하고, 가장 오래된 정보를 제공하는 식으로 진행
+    // 비교할 때엔 항상 10일의 정보를 가지고 있다.    
+    for(int i = 9; i < discount.size(); i++) {
+        discount_set[discount[i]]++;
+        // discount_set은 discount[i - 9..i]의 정보를 가지고 있음.
+        if(wantMap == discount_set) answer++;
+        if(--discount_set[discount[i - 9]] == 0)
+            discount_set.erase(discount[i - 9]);
     }
-
     return answer;
 }
