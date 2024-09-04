@@ -1,75 +1,54 @@
-#include<vector>
-#include<queue>
+#include <queue>
+#include <vector>
 using namespace std;
 
-struct Node {
-    int x;
-    int y;
-    int length;
+const int MAX_SIZE = 100;
+const int dx[4] = {-1, 0, 1, 0};
+const int dy[4] = {0, 1, 0, -1};
+int check[MAX_SIZE][MAX_SIZE];
+
+// 좌표 정보 및 좌표 연산을 하기 위한 구조체
+struct Point {
+    int y, x;
+
+    Point(int y, int x) : y(y), x(x) {};
+
+    bool isValid(int width, int height) const {
+        return y >= 0 && y < height && x >= 0 && x < width;
+    }
+
+    Point move(int i) const { return Point(y + dy[i], x + dx[i]); }
+
+    bool canMoveTo(const vector<vector<int>> &maps) const {
+        return maps[y][x] == 1 && check[y][x] == 0;
+    }
 };
 
-Node makeNewNode(Node& node, int px, int py) {
-    Node newNode = node;
-    newNode.x += px;
-    newNode.y += py;
-    newNode.length++;
-    return newNode;
-}
+queue<Point> q; // BFS를 위한 큐
 
-int solution(vector<vector<int>> maps)
-{
-    int answer = 0;
-    int MaxX = maps[0].size();
-    int MaxY = maps.size();
+int solution(vector<vector<int>> maps) {
+    int width = maps[0].size(), height = maps.size();
+    q.push({0, 0});
+    check[0][0] = 1;
 
-    queue<Node> pq;
-    Node node;
-    node.x = 0;
-    node.y = 0;
-    node.length = 1;
-    pq.push(node);
-
-    vector<vector<bool>> visited(MaxY, vector<bool>(MaxX, false));
-    visited[0][0] = true;
-
-    while(!pq.empty()) {
-        Node node = pq.front();
-        pq.pop();
-        
-        if(node.x == MaxX - 1 && node.y == MaxY - 1)
-            if(answer == -1 || answer <= node.length) {
-                answer = node.length;
-                continue;
+    // 너비 우선 탐색 진행
+    while(!q.empty()) {
+        Point current = q.front();
+        q.pop();
+        // 현재 좌표 기준으로 상하좌우를 확인
+        for(int i = 0; i < 4; i++) {
+            Point next = current.move(i);
+            // 범위가 좌표이고 벽이 아닌 경우
+            if(next.isValid(width, height) && next.canMoveTo(maps)) {
+                check[next.y][next.x] = check[current.y][current.x] + 1;
+                q.push({next.y, next.x});
             }
-
-        // 하
-        if(node.y + 1 < MaxY && !visited[node.y + 1][node.x]) {
-            visited[node.y + 1][node.x] = true;
-            if(maps[node.y + 1][node.x] == 1)
-                pq.push(makeNewNode(node, 0, 1));
-        }
-
-        // 좌
-        if(node.x + 1 < MaxX && !visited[node.y][node.x + 1]) {
-            visited[node.y][node.x + 1] = true;
-            if(maps[node.y][node.x + 1] == 1)
-                pq.push(makeNewNode(node, 1, 0));
-        }
-
-         // 상
-        if(node.y - 1 >= 0 && !visited[node.y - 1][node.x]) {
-            visited[node.y - 1][node.x] = true;
-            if(maps[node.y - 1][node.x] == 1)
-                pq.push(makeNewNode(node, 0, -1));
-        }
-
-        // 좌
-        if(node.x - 1 >= 0 && !visited[node.y][node.x - 1]) {
-            visited[node.y][node.x - 1] = true;
-            if(maps[node.y][node.x - 1] == 1)
-                pq.push(makeNewNode(node, -1, 0));
         }
     }
 
-    return answer;
+    int destinationX = width - 1, destinationY = height - 1;
+    if(check[destinationY][destinationX] == 0)
+        return -1; // 도착 지점에 도달할 수 없음
+
+    return check[destinationY][destinationX]; // 도착 지점까지 최단 거리 반환
 }
