@@ -3,56 +3,54 @@
 using namespace std;
 
 vector<int> answer;
-int scoreGap = 0; // 점수 차이
+vector<int> ryan(11, 0);
+int maxScore = -1;
 
-// 점수 카운트
-void compareScore(const vector<int> &peach, const vector<int> &rian) {
-    int peachScore = 0;
-    int rianScore = 0;
-    
-    for(int i = 0; i < peach.size() - 1; i++)
-        if(peach[i] < rian[i])
-            rianScore += 10 - i;
-        else if(peach[i] > rian[i])
-            peachScore += 10 - i;
+// 어피치와 라이언의 점수 차이 계산
+int calcScoreDiff(const vector<int> &apeach) {
+    int scoreApeach = 0, scoreLion = 0;
 
-    if(rianScore - peachScore > scoreGap) {
-        scoreGap = rianScore - peachScore;
-        answer = rian;
-    } else if(scoreGap != 0 && rianScore - peachScore == scoreGap) {
-        for(int i = rian.size() - 1; i >= 0; i--)
-            if(rian[i] > answer[i]) {
-                answer = rian;
-                break;
-            }
+    for(int i = 0; i < 11; i++) {
+        if(apeach[i] == 0 && ryan[i] == 0)
+            continue;
+        if(apeach[i] >= ryan[i])
+            scoreApeach += 10 - i;
+        else
+            scoreLion += 10 - i;
     }
+
+    return scoreLion - scoreApeach;
 }
 
-void shoot(const int arrows, const vector<int> &peach, int shooted, vector<int> rian) {
-    if(arrows == shooted) {
-        compareScore(peach, rian);
+void dfs(const vector<int> apeach, int score, int arrow) {
+    if(score == -1 || arrow == 0) {
+        ryan[10] = arrow;
+        int scoreDiff = calcScoreDiff(apeach);
+        // 현재 구한 점수 차가 기존 최대 점수 차보다 더 크고, 라이언의 점수가 더 높으면 갱신
+        if(scoreDiff > 0 && maxScore < scoreDiff) {
+            maxScore = scoreDiff;
+            answer = ryan;
+        }
+        ryan[10] = 0;
         return;
     }
 
-    for(int i = 0; i < peach.size(); i++)
-        if(rian[i] == 0)
-            if(arrows - shooted > peach[i]) {
-                rian[i] += peach[i] + 1;
-                shoot(arrows, peach, shooted + rian[i], rian);
-                rian[i] -= peach[i] + 1;
-            }
-    
-    if(arrows != shooted) {
-        rian[rian.size() - 1] += arrows - shooted;
-        shoot(arrows, peach, arrows, rian);
+    // 여러 어피치가 쏠 화실이 남은 경우
+    if(arrow > apeach[score]) {
+        ryan[score] = apeach[score] + 1;
+        dfs(apeach, score - 1, arrow - apeach[score] - 1);
+        ryan[score] = 0;
     }
+
+    // 어피치가 화살을 사용하지 않는 경우
+    dfs(apeach, score - 1, arrow);
 }
 
 vector<int> solution(int n, vector<int> info) {
-    vector<int> rian(info.size(), 0);
-    shoot(n, info, 0, rian);
+    // 10점 과녁부터 모든 조합을 확인
+    dfs(info, 10, n);
 
-    if(answer.size() == 0)
+    if(maxScore == -1)
         answer.push_back(-1);
 
     return answer;
