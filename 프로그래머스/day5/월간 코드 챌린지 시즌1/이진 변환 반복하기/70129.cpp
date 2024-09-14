@@ -1,38 +1,25 @@
+#include <algorithm>
+#include <bitset>
 #include <string>
 #include <vector>
 
 using namespace std;
 
 vector<int> solution(string s) {
-    vector<int> answer(2, 0);
-    
+    int transforms = 0;
+    int removedZeros = 0;
+    // s가 "1"이 될 때까지 계속 반복
     while(s != "1") {
-        string s2 = "";
-        
-        for(char c : s) {
-            if(c == '1') s2 += c;
-            else answer[1] += 1;
-        }
-        
-        int s2l = s2.length();
-        int mok, nmg;
-        int idx = 0;
-        vector<int> v(s2l, 0);
+        transforms++;
 
-        do {
-            mok = s2l / 2;
-            nmg = s2l - mok * 2;
-            v[idx++] = nmg;
-            s2l = mok;
-        } while (mok != 0);
+        // '0' 개수를 세어 removedZeros에 누적
+        removedZeros += count(s.begin(), s.end(), '0');
 
-        string s3 = "";
-        for (int i = idx - 1; i >= 0; i--) {
-            s3 += v[i] + '0';
-        }
-        
-        s = s3;
-        answer[0]++;
+        // '1' 개수를 세고 2진수로 변환
+        int oneCount = count(s.begin(), s.end(), '1');
+        s = bitset<32>(oneCount).to_string();
+        s = s.substr(s.find('1'));
     }
-    return answer;
+
+    return {transforms, removedZeros};
 }
