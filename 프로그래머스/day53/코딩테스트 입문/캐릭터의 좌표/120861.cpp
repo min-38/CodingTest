@@ -3,35 +3,17 @@
 
 using namespace std;
 
-int maxX;
-int maxY;
-
-bool check(int x, int y) {
-    return (x <= maxX && x >= maxX * -1) && (y <= maxY && y >= maxY * -1);
-}
-
 vector<int> solution(vector<string> keyinput, vector<int> board) {
-    vector<int> answer(2, 0);
+    // 현재 위치를 나타내는 크기가 2이고 값이 모두 0인 벡터 선언
+    vector<int> v(2, 0);
 
-    maxX = board[0] / 2;
-    maxY = board[1] / 2;
-
+    // 키 입력 순서대로 캐릭터 이동
     for(string s : keyinput) {
-        int x = answer[0];
-        int y = answer[1];
-        if(s == "left")
-            x -= 1;
-        else if(s == "right")
-            x += 1;
-        else if(s == "down")
-            y -= 1;
-        else
-            y += 1;
-
-        if(check(x, y)) {
-            answer[0] = x;
-            answer[1] = y;
-        }
+        if(s == "up" && v[1] < +board[1] / 2) v[1]++;
+        else if(s == "down" && v[1] > -board[1] / 2) v[1]--;
+        else if(s == "left" && v[0] > -board[0] / 2) v[0]--;
+        else if(s == "right" && v[0] < +board[0] / 2) v[0]++;
     }
-    return answer;
+
+    return v;
 }
