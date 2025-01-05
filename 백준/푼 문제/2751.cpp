@@ -1,66 +1,72 @@
 #include <iostream>
 #include <vector>
-
 using namespace std;
 
-vector<int> sorted;
-
-void merge(vector<int> *data, int start, int mid, int end) {
-    int i = start;
-    int j = mid + 1;
-    int k = start;
-
-    while(i <= mid && j <= end) {
-        if((*data)[i] <= (*data)[j]) {
-            sorted[k] = (*data)[i];
-            i++;
-        } else {
-            sorted[k] = (*data)[j];
-            j++;
-        }
-        k++;
-    }
-
-    if(i > mid) {
-        for(int t = j; t <= end; t++) {
-            sorted[k] = (*data)[t];
-            k++;
-        }
-    } else {
-        for(int t = i; t <= mid; t++) {
-            sorted[k] = (*data)[t];
-            k++;
-        }
-    }
-
-    // 정렬된 배열을 삽입
-    for(int t = start; t <= end; t++)
-        (*data)[t] = sorted[t];
-}
-
-void merge_sort(vector<int> *data, int start, int end) {
-    if(start < end) {
-        int mid = (start + end) / 2;
-
-        merge_sort(data, start, mid); // 좌측 정렬
-        merge_sort(data, mid + 1, end); // 우측 정렬
-        merge(data, start, mid, end);
-    }
-}
+void merge_sort(int s, int e);
+static vector<int> A;
+static vector<int> tmp;
 
 int main() {
-    int N;
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    int N; // 수의 개수
     cin >> N;
+    A = vector<int>(N + 1, 0);
+    tmp = vector<int>(N + 1, 0);
 
-    vector<int> v(N, 0);
-    sorted.resize(N, 0);
-    for(int i = 0; i < N; i++)
-        cin >> v[i];
-    
-    merge_sort(&v, 0, N - 1);
+    for(int i = 1; i <= N; i++) {
+        cin >> A[i];
+    }
+    merge_sort(1, N); // 병합 정렬 수행하기
 
-    for (int i = 0; i < N; i++)
-        printf("%d\n", v[i]);
+    for(int i = 1; i <= N; i++) {
+        cout << A[i] << endl;
+    }
 
     return 0;
+}
+
+void merge_sort(int s, int e) {
+    if(e - s < 1) {
+        return;
+    }
+
+    int m = s + (e - s) / 2; // 중간점
+
+    // 재귀 함수 형태로 구현
+    merge_sort(s, m);
+    merge_sort(m + 1, e);
+
+    for(int i = s; i <= e; i++) {
+        tmp[i] = A[i];
+    }
+
+    int k = s;
+    int index1 = s;
+    int index2 = m + 1;
+
+    while(index1 <= m && index2 <= e) { // 두 그룹을 병합하는 로직
+        if(tmp[index1] > tmp[index2]) {
+            A[k] = tmp[index2];
+            k++;
+            index2++;
+        } else {
+            A[k] = tmp[index1];
+            k++;
+            index1++;
+        }
+    }
+    // 한쪽 그룹이 모두 선택된 후 남아있는 값 정리하기
+    while(index1 <= m) {
+        A[k] = tmp[index1];
+        k++;
+        index1++;
+    }
+    while(index2 <= e) {
+        A[k] = tmp[index2];
+        k++;
+        index2++;
+    }
 }
