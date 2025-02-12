@@ -8,42 +8,43 @@ int main() {
     cin.tie(NULL);
     cout.tie(NULL);
 
-    int N; // 수의 개수
+    int result = 0;
+
+    int N;
     cin >> N;
-    vector<int> A(N, 0);
 
-    for(int i = 0; i < N; i++) {
-        cin >> A[i];
-    }
-    sort(A.begin(), A.end());
-    int Result = 0;
+    vector<int> v(N);
 
-    for(int k = 0; k < N; k++) {
-        long find = A[k];
-        int i = 0;
-        int j = N - 1;
+    for (int i = 0; i < N; i++)
+        cin >> v[i];
 
-        while(i < j) {
-            if(A[i] + A[j] == find) {
-                if(i != k && j != k) {
-                    Result++;
-                    break;
-                }
-                else if(i == k) {
-                    i++;
-                }
-                else if(j == k) {
-                    j--;
-                }
-            }
-            else if(A[i] + A[j] < find) {
-                i++;
-            }
+    sort(v.begin(), v.end());
+
+    for (int i = 0 ; i < N ; i++) {
+        int cursor1 = 0;
+        int cursor2 = N - 1;
+
+        while (cursor1 < cursor2) {
+            if(cursor1 == i) {
+                cursor1++;
+                continue;
+            } 
+            
+            if(cursor2 == i) {
+                cursor2--;
+                continue;
+            } 
+            
+            if (v[cursor1] + v[cursor2] < v[i])
+                cursor1++;
+            else if (v[cursor1] + v[cursor2] > v[i])
+                cursor2--;
             else {
-                j--;
+                result++;
+                break;
             }
         }
     }
 
-    cout << Result << endl;
+    cout << result << "\n";
 }
