@@ -1,77 +1,73 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <queue>
-#include <set>
-
 using namespace std;
 
-int N, M, V;
-vector<set<int>> v;
-vector<bool> dfsVisited;
-queue<int> q;
-vector<bool> bfsVisited;
+static vector<vector <int>> A;
+static vector<bool> visited;
+static bool arrive;
 
-void DFS(int start)
-{
-    cout << start << " ";
-
-    dfsVisited[start] = true;
-
-    for (int connect : v[start])
-    {
-        if (!dfsVisited[connect])
-        {
-            DFS(connect);
-        }
-    }
-}
-
-void BFS()
-{
-    while (!q.empty())
-    {
-        int start = q.front();
-        q.pop();
-
-        cout << start << " ";
-
-        for (int idx : v[start])
-        {
-            if (!bfsVisited[idx])
-            {
-                bfsVisited[idx] = true;
-                q.push(idx);
-            }
-        }
-    }
-}
+void DFS(int node);
+void BFS(int node);
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
 
-    cin >> N >> M >> V;
+    int N, M, Start;
+    arrive = false;
+    cin >> N >> M >> Start;
+    A.resize(N + 1);
 
-    v.resize(N + 1);
-    dfsVisited.resize(N + 1, false);
-    bfsVisited.resize(N + 1, false);
-
-    int s, e;
     for (int i = 0; i < M; i++)
     {
+        int s, e;
         cin >> s >> e;
-        v[s].insert(e);
-        v[e].insert(s);
+        A[s].push_back(e);
+        A[e].push_back(s);
     }
+    // 방문할 수 있는 노드가 여러 개일 때는 번호가 작은 것을 먼저 방문하기 위해 정렬
+    for (int i = 1; i <= N; i++)
+        sort(A[i].begin(), A[i].end());
 
-    DFS(V);
+    visited = vector<bool>(N + 1, false);
+    DFS(Start);
     cout << "\n";
-    
-    q.push(V);
-    bfsVisited[V] = true;
-    BFS();
+    fill(visited.begin(), visited.end(), false);
+    BFS(Start);
     cout << "\n";
 
     return 0;
+}
+
+void DFS(int node) // DFS 구현
+{
+    cout << node << " ";
+    visited[node] = true;
+
+    for (int i : A[node])
+        if (!visited[i])
+            DFS(i);
+}
+
+void BFS(int node) // BFS 구현
+{
+    queue<int> myqueue;
+    myqueue.push(node);
+    visited[node] = true;
+
+    while (!myqueue.empty())
+    {
+        int now_node = myqueue.front();
+        myqueue.pop();
+        cout << now_node << " ";
+        for (int i : A[now_node])
+            if (!visited[i])
+                if (!visited[i]) {
+                    visited[i] = true;
+                    myqueue.push(i);
+                }
+    }
 }
