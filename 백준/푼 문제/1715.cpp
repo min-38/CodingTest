@@ -1,5 +1,7 @@
 #include <iostream>
 #include <queue>
+#include <functional>
+
 using namespace std;
 
 int main() {
@@ -7,30 +9,32 @@ int main() {
     cin.tie(NULL);
     cout.tie(NULL);
 
-    int N; // 카드 묶음 수
+    priority_queue<int, vector<int>, greater<int>> pq;
+
+    int N; // 카드의 묶음
     cin >> N;
-    priority_queue<int, vector<int>, greater<int> > pq; // 오름차순 정렬
-    int data;
 
-    for (int i = 0; i < N; i++) {
-        cin >> data;
-        pq.push(data);
+    for(int i = 0; i < N; i++) {
+        int cards;
+        cin >> cards;
+
+        pq.push(cards);
     }
 
-    int data1 = 0;
-    int data2 = 0;
-    int sum = 0;
+    int result = 0;
 
-    while(pq.size() != 1) {
-        data1 = pq.top();
+    while(pq.size() > 1) {
+        int a = pq.top();
         pq.pop();
-        data2 = pq.top();
+
+        int b = pq.top();
         pq.pop();
-        sum += data1 + data2;
-        pq.push(data1 + data2);
+
+        pq.push(a + b);
+        result += a + b;
     }
 
-    cout << sum << endl;
+    cout << result << endl;
 
     return 0;
 }
