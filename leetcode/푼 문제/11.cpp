@@ -5,14 +5,12 @@ public:
         int result = 0;
         while (idx1 < idx2) {
             int tmp = min(height[idx1], height[idx2]) * (idx2 - idx1);
-            if (result < tmp)
-                result = tmp;
+            result = max(result, tmp);
 
-            if (height[idx1] <= height[idx2]) {
+            if (height[idx1] < height[idx2])
                 idx1++;
-            } else if (height[idx1] > height[idx2]) {
-                idx2--;
-            }    
+            else
+                idx2--; 
         }
 
         return result;
