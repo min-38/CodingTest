@@ -1,46 +1,19 @@
 class Solution {
 public:
     bool reorderedPowerOf2(int n) {
-        vector<int> v(10, 0);
-        string s = to_string(n);
+        if (n == 0) return false;
 
-        if (n == 1)
-         return true;
+        string target = to_string(n);
+        sort(target.begin(), target.end());
+        const size_t L = target.size();
 
-        for (char c : s)
-            v[c - '0'] += 1;
-
-        
-        int idx = 0;
-        while (true)
-        {
-            unsigned long long num = 2;
-            num <<= idx;
-            ++idx;
-
-            string s2 = to_string(num);
-
-            if (s2.length() > s.length()) return false;
-            if (s2.length() < s. length()) continue;
-            
-            vector<int> v2(10, 0); 
-            for (char c : s2)
-                v2[c - '0'] += 1;
-            
-            bool matched = true;
-            for (int i = 0; i < 10; i++)
-            {
-                if (v[i] != v2[i])
-                {
-                    matched = false;
-                    break;
-                }
+        for (unsigned long long x = 1ULL; ; x <<= 1) {
+            string s = to_string(x);
+            if (s.size() > L) return false;
+            if (s.size() == L) {
+                sort(s.begin(), s.end());
+                if (s == target) return true;
             }
-
-            if (matched)
-                return true;
         }
-
-        return false;
     }
 };
