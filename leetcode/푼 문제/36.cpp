@@ -8,7 +8,7 @@ public:
         for (int i = 0; i < 9; i++)
             for (int j = 0; j < 9; j++)
             {
-                char ch = boxes[i][j];
+                char ch = board[i][j];
                 if (ch == '.') continue;
 
                 int d = ch - '1';
