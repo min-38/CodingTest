@@ -17,7 +17,7 @@ void setting(int value)
     int N; // 혹은 M
     cin >> N;
 
-    for (int i = 0; i < N; i++)
+    while (N--)
     {
         int x1, y1, x2, y2;
         cin >> x1 >> y1 >> x2 >> y2;
@@ -36,8 +36,8 @@ int main()
     deque<pair<pair<int, int>, int>> dq;
     dq.push_front({{0, 0}, 0});  // x, y
     
-    vector<int> lifes(mapSize * mapSize, INT_MAX);
-    lifes[0] = 0;
+    vector<vector<int>> lifes(mapSize, vector<int>(mapSize, INT_MAX));
+    lifes[0][0] = 0;
 
     int result = -1;
     while (!dq.empty())
@@ -62,24 +62,23 @@ int main()
 
             if (nextX >= 0 && nextX < mapSize && nextY >= 0 && nextY < mapSize)
             {
+                int cost = map[nextY][nextX];
                 // 죽음의 영역이면 가지 않음
-                if (map[nextY][nextX] == 2)
+                if (cost == 2)
                     continue;
                 
-                int newLife = life + (map[nextY][nextX] == 1);
-
-                if (lifes[nextY * mapSize + nextX] > newLife)
+                int newLife = life + (cost == 1);
+                if (lifes[nextY][nextX] > newLife)
                 {
-                    lifes[nextY * mapSize + nextX] = newLife;
+                    lifes[nextY][nextX] = newLife;
 
-                    if (map[nextY][nextX] == 1)
+                    if (cost == 1)
                         dq.push_back({{nextX, nextY}, newLife});
                     else
                         dq.push_front({{nextX, nextY}, newLife});
                 }
             }
         }
-
     }
 
     cout << result << endl;
