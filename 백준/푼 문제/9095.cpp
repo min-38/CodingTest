@@ -1,5 +1,5 @@
 #include <iostream>
-#include <stack>
+#include <vector>
 
 using namespace std;
 
@@ -9,41 +9,21 @@ int main() {
     int T;
     cin >> T;
 
+    vector<int> dp(12, 0);
+    dp[1] = 1;
+    dp[2] = 2;
+    dp[3] = 4;
+
+    for (int i = 4; i < 12; i++)
+        dp[i] = dp[i - 1] + dp[i - 2] + dp[i - 3];
+
     while (T--)
     {
         // 정수 n 입력 받기
         int n;
         cin >> n;
 
-        stack<int> st;
-
-        st.push(1);
-        st.push(2);
-        st.push(3);
-
-        int result = 0;
-        while (!st.empty())
-        {
-            int val = st.top();
-            st.pop();
-
-            if (val == n)
-            {
-                result++;
-                continue;
-            }
-
-            if (val + 1 <= n)
-                st.push(val + 1);
-            
-            if (val + 2 <= n)
-                st.push(val + 2);
-
-            if (val + 3 <= n)
-                st.push(val + 3);
-        }
-
-        cout << result << endl;
+        cout << dp[n] << endl;
     }
 
     return 0;
