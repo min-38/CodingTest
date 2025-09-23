@@ -1,47 +1,34 @@
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
-string getWall(int n, int num) {
-    vector<char> binaries(n);
-    int idx = n - 1;
-    while (num >= 2)
-    {
-        binaries[idx--] = (num % 2) + '0';
-        num /= 2;
-    }
-    binaries[idx] = num + '0';
-
-    string str = "";
-    for (char c : binaries)
-        if (c == '1')
-            str += '#';
-        else
-            str += ' ';
+string toBinaryString(int n, int OrCal)
+{
+    string binary = "";
     
-    return str;
+    while (OrCal > 0)
+    {
+        binary += (OrCal % 2 == 0 ? " " : "#");
+        OrCal /= 2;
+    }
+
+    while (binary.length() < n)
+        binary += " ";
+
+    reverse(binary.begin(), binary.end());
+    return binary;
 }
 
 vector<string> solution(int n, vector<int> arr1, vector<int> arr2) {
-    vector<string> answer(n);
+    vector<string> answer;
     
     for (int i = 0; i < n; i++)
-        answer[i] = getWall(n, arr1[i]);
-        
-    for (int i = 0; i < n; i++)
     {
-        string newString = getWall(n, arr2[i]);
-        string& line = answer[i];
-        
-        for (int j = 0; j < n; j++)
-        {
-            if (line[j] == '#') continue;
-            
-            if (newString[j] == '#')
-                line[j] = '#';
-        }
+        int OrCal = arr1[i] | arr2[i];
+        answer.push_back(toBinaryString(n, OrCal));
     }
-        
+    
     return answer;
 }
