@@ -1,66 +1,44 @@
 #include <string>
 #include <vector>
-#include <queue>
+#include <algorithm>
 
 using namespace std;
 
-struct Node {
-    string str;
-    int seq;
-};
-
 int solution(string s) {
-    int answer;
+    int n = s.length();
+
+    if (n == 1)
+        return 1;
     
-    int sLength = s.length();
-    answer = s.length();
-    
-    int unit = 1;
-    int limit = sLength / 2;
-    
-    while (unit <= sLength)
+    int answer = n;
+
+    // unit 단위로 문자열을 순회
+    for (int unit = 1; unit <= n / 2; ++unit)
     {
-        queue<Node> q;
-        for (int i = 0; i < sLength; i += unit)
-        {
-            string new_str = "";
-            for (int j = i; j < i + unit; j++)
+        string compressed = "";
+
+        for (int i = 0; i < n; ) {
+            string current_chunk = s.substr(i, unit);
+            int count = 1;
+
+            // 현재 문자열(current_chunk)과 몇 번 반복되는지 확인
+            int next_pos = i + unit;
+            while (next_pos < n && s.substr(next_pos, unit) == current_chunk)
             {
-                if (j >= sLength)
-                    break;
-                new_str += s[j];
+                count++;
+                next_pos += unit;
             }
 
-            if (q.empty())
-            {
-                q.push({new_str, 1});
-                continue;
-            }
-            
-            Node& n = q.back();
-            if (n.str == new_str)
-            {
-                n.seq += 1;
-                continue;
-            }
-            q.push({new_str, 1});
-        }
-        
-        string tmp = "";
-        while (!q.empty())
-        {
-            Node n = q.front();
-            q.pop();
-            
-            if (n.seq > 1)
-                tmp += to_string(n.seq);
-            tmp += n.str;
-        }
-        
-        if (tmp.length() < answer)
-            answer = tmp.length();
+            if (count > 1)
+                compressed += to_string(count);
+            compressed += current_chunk;
 
-        unit++;
+            // 다음 탐색 위치로 이동
+            i = next_pos;
+        }
+
+        answer = min(answer, (int)compressed.length());
     }
+
     return answer;
 }
