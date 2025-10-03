@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <algorithm>
 
 using namespace std;
 
@@ -19,7 +18,7 @@ int main()
     
     int zero_cnt = 0;
     vector<vector<int>> storage(N, vector<int>(M));
-    vector<int> visited(N * M, 0);
+    vector<int> visited(N * M, -1);
     queue<pair<int, int>> q; // (y, x)
 
     for (int i = 0; i < N; i++)
@@ -32,56 +31,55 @@ int main()
             else if (storage[i][j] == 1)
             {
                 q.push({i, j});
-                visited[i * M + j] = 1;
+                visited[i * M + j] = 0;
             }
                 
         }
 
     if (zero_cnt == 0)
     {
-        cout << "0" << endl;
+        cout << 0 << '\n';
         return 0;
     }
+
+    int max_day = 0;
 
     while (!q.empty())
     {
         auto a = q.front();
         q.pop();
 
+        int cy = a.first;
+        int cx = a.second;
+        int curd = visited[cy * M + cx];
+
+
         for (int i = 0; i < 4; i++)
         {
-            int nx = a.second + dx[i];
-            int ny = a.first + dy[i];
+            int nx = cx + dx[i];
+            int ny = cy + dy[i];
 
             if (nx < 0 || nx >= M || ny < 0 || ny >= N)
                 continue;
         
-            if (storage[ny][nx] == 0)
+            if (storage[ny][nx] == 0 && visited[ny * M + nx] == -1)
             {
                 storage[ny][nx] = 1;
                 --zero_cnt;
-                
+
+                visited[ny * M + nx] = curd + 1;
+                max_day = max(max_day, curd + 1);
+
                 q.push({ny, nx});
-                visited[ny * M + nx] = visited[a.first * M + a.second] + 1;
-            }
-            else if (storage[ny][nx] == 1)
-            {
-                int nday = visited[a.first * M + a.second] + 1;
-                if (nday < visited[ny * M + nx])
-                {
-                    visited[ny * M + nx] = nday;
-                    q.push({ny, nx});
-                }
             }
         }
     }
 
     if (zero_cnt > 0)
-        cout << -1 << endl;
+        cout << -1 << "\n";
     else
     {
-        sort(visited.rbegin(), visited.rend());
-        cout << visited[0] - 1 << endl;
+        cout << max_day << '\n';
     }
 
 
