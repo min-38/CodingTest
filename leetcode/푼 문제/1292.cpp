@@ -1,30 +1,43 @@
 class Solution {
 public:
+    vector<vector<int>> ps;
+    int th;
+
+    inline bool ok(int i, int j, int k) {
+        int sum = ps[i + k][j + k] - ps[i][j + k] - ps[i + k][j] + ps[i][j];
+        return sum <= th;
+    }
+
+    bool exists(int k, int m, int n) {
+        for (int i = 0; i + k <= m; i++)
+            for (int j = 0; j + k <= n; j++)
+                if (ok(i, j, k))
+                    return true;
+        return false;
+    }
+
     int maxSideLength(vector<vector<int>>& mat, int threshold) {
         int m = mat.size();
         int n = mat[0].size();
+        th = threshold;
 
-        vector<vector<int>> prefix(m + 1, vector<int>(n + 1, 0));
+        ps.assign(m + 1, vector<int>(n + 1, 0));
         for (int i = 1; i <= m; i++)
             for (int j = 1; j <= n; j++)
-                prefix[i][j] = mat[i - 1][j - 1]
-                            + prefix[i - 1][j]
-                            + prefix[i][j - 1]
-                            - prefix[i - 1][j - 1];
+                ps[i][j] = mat[i - 1][j - 1]
+                         + ps[i - 1][j]
+                         + ps[i][j - 1]
+                         - ps[i - 1][j - 1];
 
-        for (int k = min(m, n); k >= 1; --k)
+        int lo = 0, hi = min(m, n);
+        while (lo < hi)
         {
-            for (int i = 0; i + k <= m; i++)
-            {
-                for (int j = 0; j + k <= n; j++)
-                {
-                    int sum = prefix[i + k][j + k] - prefix[i][j + k] - prefix[i + k][j] + prefix[i][j];
-                    if (sum <= threshold)
-                        return k;
-                }
-            }
+            int mid = (lo + hi + 1) / 2;
+            if (exists(mid, m, n))
+                lo = mid;
+            else
+                hi = mid - 1;
         }
-
-        return 0;
+        return lo;
     }
 };
